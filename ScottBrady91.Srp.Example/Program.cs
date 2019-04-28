@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Numerics;
+// ReSharper disable InconsistentNaming
 
 namespace ScottBrady91.Srp.Example
 {
@@ -6,14 +9,22 @@ namespace ScottBrady91.Srp.Example
     {
         static void Main(string[] args)
         {
-            const string username = "alice"; // I - user's username
-            const string password = "password123"; // P - user's password
-            const string saltHex = "BEB25379D1A8581EB5A727673A2441EE"; // s - user's salt (from server)
+            var client = new SrpClient(TestVectors.H, TestVectors.g, TestVectors.N);
+            var server = new SrpServer(TestVectors.H, TestVectors.g, TestVectors.N);
 
-            var client = new SrpClient();
-            var verifier = client.GenerateVerifier(username, password, saltHex.ToBytes());
+            // generate password verifier to store 
+            BigInteger v = client.GenerateVerifier(TestVectors.I, TestVectors.P, TestVectors.s);
+            if (v != TestVectors.expected_v) throw new Exception();
+
+            var A = client.GenerateAValues();
+            if (A != TestVectors.expected_A) throw new Exception();
+
+            var B = server.GenerateBValues(v);
+            if (B != TestVectors.expected_B) throw new Exception();
+
+            var u = TestVectors.H(A.ToByteArray(true, true).Concat(B.ToByteArray(true, true)).ToArray());
+
+
         }
-
-        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Numerics;
 
 namespace ScottBrady91.Srp.Example
@@ -17,9 +18,16 @@ namespace ScottBrady91.Srp.Example
             return hexAsBytes;
         }
 
-        public static BigInteger ToUnsignedBigInt(this byte[] bytes)
+        // both unsigned and big endian
+        public static BigInteger ToSrpBigInt(this byte[] bytes)
         {
             return new BigInteger(bytes, true, true);
+        }
+
+        // Add padding character back to hex before parsing
+        public static BigInteger ToSrpBigInt(this string hex)
+        {
+            return BigInteger.Parse("0" + hex, NumberStyles.HexNumber);
         }
     }
 }
