@@ -25,8 +25,7 @@ namespace ScottBrady91.Srp.Example
         public BigInteger GenerateVerifier(string I, string P, byte[] s)
         {
             // x = H(s | H(I | ":" | P))
-            var xBytes = H(s.Concat(H(Encoding.UTF8.GetBytes(I + ":" + P))).ToArray());
-            var x = xBytes.ToSrpBigInt();
+            var x = GeneratePrivateKey(I, P, s);
 
             // v = g^x
             var v = BigInteger.ModPow(g, x, N);
@@ -43,6 +42,34 @@ namespace ScottBrady91.Srp.Example
             A = BigInteger.ModPow(g, a, TestVectors.N);
 
             return A;
+        }
+
+        public BigInteger ComputeSessionKey(string I, string P, byte[] s, BigInteger u, BigInteger B)
+        {
+            var x = GeneratePrivateKey(I, P, s);
+            var k = Helpers.Computek(g, N, H);
+
+            // (a + ux)
+            var exp = a + u * x;
+
+            // (B - kg ^ x)
+            var val = mod(B - (BigInteger.ModPow(g, x, N) * k % N), N); // TODO: check use of mod here
+
+            // S = (B - kg ^ x) ^ (a + ux)
+            return BigInteger.ModPow(val, exp, N);
+        }
+
+        private BigInteger GeneratePrivateKey(string I, string P, byte[] s)
+        {
+            // x = H(s | H(I | ":" | P))
+            var x = H(s.Concat(H(Encoding.UTF8.GetBytes(I + ":" + P))).ToArray());
+
+            return x.ToSrpBigInt();
+        }
+
+        BigInteger mod(BigInteger x, BigInteger m)
+        {
+            return (x % m + m) % m;
         }
     }
 }

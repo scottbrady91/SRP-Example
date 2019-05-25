@@ -26,28 +26,27 @@ namespace ScottBrady91.Srp.Example
             // b = random()
             b = TestVectors.b;
 
-            // k = H(N, g)
-            var gBytes = BitConverter.GetBytes(g).Reverse().ToArray();
-            var NBytes = N.ToByteArray(true, true);
-
-            var paddedG = new byte[NBytes.Length];
-            Array.Copy(gBytes, 0, paddedG, NBytes.Length - gBytes.Length, gBytes.Length);
-
-            var k = H(NBytes.Concat(paddedG).ToArray());
-            if (!k.SequenceEqual("7556AA045AEF2CDD07ABAF0F665C3E818913186F".ToBytes())) throw new Exception();
-
-            // B = kv + g^b
+            var k = Helpers.Computek(g, N, H);
 
             // kv % N
-            var left = (new BigInteger(k, isBigEndian: true) * v) % N;
+            var left = (k * v) % N;
 
             // g^b % N
             var right = BigInteger.ModPow(g, b, N);
 
-            // (left + right) % N
-            B = (right + left) % N;
+            // B = kv + g^b
+            B = (left + right) % N;
 
             return B;
+        }
+
+        public BigInteger ComputeSessionKey(BigInteger v, BigInteger u, BigInteger A)
+        {
+            // (Av^u)
+            var left = A * BigInteger.ModPow(v, u, N) % N;
+            
+            // S = (Av^u) ^ b
+            return BigInteger.ModPow(left, b, N);
         }
     }
 }

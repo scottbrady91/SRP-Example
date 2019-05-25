@@ -22,7 +22,11 @@ namespace ScottBrady91.Srp.Example
             var B = server.GenerateBValues(v);
             if (B != TestVectors.expected_B) throw new Exception();
 
-            var u = TestVectors.H(A.ToByteArray(true, true).Concat(B.ToByteArray(true, true)).ToArray());
+            var u = TestVectors.H(A.ToByteArray(true, true).Concat(B.ToByteArray(true, true)).ToArray()).ToSrpBigInt();
+
+            var clientS = client.ComputeSessionKey(TestVectors.I, TestVectors.P, TestVectors.s, u, B);
+            var serverS = server.ComputeSessionKey(v, u, A);
+            if (clientS != serverS || clientS != TestVectors.expected_S) throw new Exception();
 
 
         }

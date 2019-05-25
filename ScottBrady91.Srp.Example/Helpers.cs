@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Numerics;
+// ReSharper disable InconsistentNaming
 
 namespace ScottBrady91.Srp.Example
 {
@@ -28,6 +30,20 @@ namespace ScottBrady91.Srp.Example
         public static BigInteger ToSrpBigInt(this string hex)
         {
             return BigInteger.Parse("0" + hex, NumberStyles.HexNumber);
+        }
+
+        public static BigInteger Computek(int g, BigInteger N ,Func<byte[], byte[]> H)
+        {
+            // k = H(N, g)
+            var gBytes = BitConverter.GetBytes(g).Reverse().ToArray();
+            var NBytes = N.ToByteArray(true, true);
+
+            var paddedG = new byte[NBytes.Length];
+            Array.Copy(gBytes, 0, paddedG, NBytes.Length - gBytes.Length, gBytes.Length);
+
+            var k = H(NBytes.Concat(paddedG).ToArray());
+
+            return new BigInteger(k, isBigEndian: true);
         }
     }
 }
