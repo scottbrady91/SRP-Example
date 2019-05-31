@@ -48,5 +48,17 @@ namespace ScottBrady91.Srp.Example
             // S = (Av^u) ^ b
             return BigInteger.ModPow(left, b, N);
         }
+
+        public BigInteger ValidateClientProof(string I, byte[] s, BigInteger B, BigInteger S)
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
+
+        public BigInteger GenerateServerProof()
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
     }
 }

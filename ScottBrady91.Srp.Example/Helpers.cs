@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using System.Text;
+
 // ReSharper disable InconsistentNaming
 
 namespace ScottBrady91.Srp.Example
@@ -35,15 +37,47 @@ namespace ScottBrady91.Srp.Example
         public static BigInteger Computek(int g, BigInteger N ,Func<byte[], byte[]> H)
         {
             // k = H(N, g)
-            var gBytes = BitConverter.GetBytes(g).Reverse().ToArray();
             var NBytes = N.ToByteArray(true, true);
+            var gBytes = PadBytes(BitConverter.GetBytes(g).Reverse().ToArray(), NBytes.Length);
 
-            var paddedG = new byte[NBytes.Length];
-            Array.Copy(gBytes, 0, paddedG, NBytes.Length - gBytes.Length, gBytes.Length);
-
-            var k = H(NBytes.Concat(paddedG).ToArray());
+            var k = H(NBytes.Concat(gBytes).ToArray());
 
             return new BigInteger(k, isBigEndian: true);
+        }
+
+        public static byte[] ComputeClientProof(
+            BigInteger N,
+            Func<byte[], byte[]> H,
+            BigInteger A,
+            BigInteger B,
+            byte[] S)
+        {
+            var NBytes = N.ToByteArray(true, true);
+
+            // M1 = H( A | B | S )
+            return H((PadBytes(A.ToByteArray(true, true), NBytes.Length))
+                .Concat(PadBytes(B.ToByteArray(true, true), NBytes.Length))
+                .Concat(PadBytes(S, NBytes.Length))
+                .ToArray());
+        }
+
+        public static byte[] ComputeServerProof(BigInteger N, Func<byte[], byte[]> H, BigInteger A, byte[] M1, byte[] S)
+        {
+            var NBytes = N.ToByteArray(true, true);
+
+            // M2 = H( A | M1 | S )
+            return H((PadBytes(A.ToByteArray(true, true), NBytes.Length))
+                .Concat(PadBytes(M1, NBytes.Length))
+                .Concat(PadBytes(S, NBytes.Length))
+                .ToArray());
+        }
+
+        public static byte[] PadBytes(byte[] bytes, int length)
+        {
+            var paddedBytes = new byte[length];
+            Array.Copy(bytes, 0, paddedBytes, length - bytes.Length, bytes.Length);
+
+            return paddedBytes;
         }
     }
 }

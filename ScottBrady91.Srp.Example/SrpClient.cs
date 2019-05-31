@@ -59,6 +59,18 @@ namespace ScottBrady91.Srp.Example
             return BigInteger.ModPow(val, exp, N);
         }
 
+        public BigInteger GenerateClientProof(string I, byte[] s, BigInteger B, BigInteger S)
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
+
+        public BigInteger ValidateServerProof()
+        {
+            // TODO
+            throw new NotImplementedException();
+        }
+
         private BigInteger GeneratePrivateKey(string I, string P, byte[] s)
         {
             // x = H(s | H(I | ":" | P))
@@ -67,7 +79,7 @@ namespace ScottBrady91.Srp.Example
             return x.ToSrpBigInt();
         }
 
-        BigInteger mod(BigInteger x, BigInteger m)
+        private static BigInteger mod(BigInteger x, BigInteger m)
         {
             return (x % m + m) % m;
         }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+
 // ReSharper disable InconsistentNaming
 
 namespace ScottBrady91.Srp.Example
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var client = new SrpClient(TestVectors.H, TestVectors.g, TestVectors.N);
             var server = new SrpServer(TestVectors.H, TestVectors.g, TestVectors.N);
@@ -28,7 +29,22 @@ namespace ScottBrady91.Srp.Example
             var serverS = server.ComputeSessionKey(v, u, A);
             if (clientS != serverS || clientS != TestVectors.expected_S) throw new Exception();
 
+            var M1 = Helpers.ComputeClientProof(
+                TestVectors.N,
+                TestVectors.H,
+                A,
+                B,
+                clientS.ToByteArray(true, true));
 
+            var M2 = Helpers.ComputeServerProof(
+                TestVectors.N, 
+                TestVectors.H, 
+                A, 
+                M1, 
+                clientS.ToByteArray(true, true));
+
+            Console.WriteLine("M1: " + M1.ToSrpBigInt());
+            Console.WriteLine("M2: " + M2.ToSrpBigInt());
         }
     }
 }
