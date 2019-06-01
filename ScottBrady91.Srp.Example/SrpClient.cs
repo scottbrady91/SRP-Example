@@ -53,22 +53,20 @@ namespace ScottBrady91.Srp.Example
             var exp = a + u * x;
 
             // (B - kg ^ x)
-            var val = mod(B - (BigInteger.ModPow(g, x, N) * k % N), N); // TODO: check use of mod here
+            var val = mod(B - (BigInteger.ModPow(g, x, N) * k % N), N);
 
             // S = (B - kg ^ x) ^ (a + ux)
             return BigInteger.ModPow(val, exp, N);
         }
 
-        public BigInteger GenerateClientProof(string I, byte[] s, BigInteger B, BigInteger S)
+        public BigInteger GenerateClientProof(BigInteger B, BigInteger S)
         {
-            // TODO
-            throw new NotImplementedException();
+            return Helpers.ComputeClientProof(N, H, A, B, S);
         }
 
-        public BigInteger ValidateServerProof()
+        public bool ValidateServerProof(BigInteger M2, BigInteger M1, BigInteger S)
         {
-            // TODO
-            throw new NotImplementedException();
+            return M2 == Helpers.ComputeServerProof(N, H, A, M1, S);
         }
 
         private BigInteger GeneratePrivateKey(string I, string P, byte[] s)

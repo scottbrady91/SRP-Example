@@ -45,31 +45,33 @@ namespace ScottBrady91.Srp.Example
             return new BigInteger(k, isBigEndian: true);
         }
 
-        public static byte[] ComputeClientProof(
+        public static BigInteger ComputeClientProof(
             BigInteger N,
             Func<byte[], byte[]> H,
             BigInteger A,
             BigInteger B,
-            byte[] S)
+            BigInteger S)
         {
-            var NBytes = N.ToByteArray(true, true);
+            var padLength = N.ToByteArray(true, true).Length;
 
             // M1 = H( A | B | S )
-            return H((PadBytes(A.ToByteArray(true, true), NBytes.Length))
-                .Concat(PadBytes(B.ToByteArray(true, true), NBytes.Length))
-                .Concat(PadBytes(S, NBytes.Length))
-                .ToArray());
+            return H((PadBytes(A.ToByteArray(true, true), padLength))
+                    .Concat(PadBytes(B.ToByteArray(true, true), padLength))
+                    .Concat(PadBytes(S.ToByteArray(true, true), padLength))
+                    .ToArray())
+                .ToSrpBigInt();
         }
 
-        public static byte[] ComputeServerProof(BigInteger N, Func<byte[], byte[]> H, BigInteger A, byte[] M1, byte[] S)
+        public static BigInteger ComputeServerProof(BigInteger N, Func<byte[], byte[]> H, BigInteger A, BigInteger M1, BigInteger S)
         {
-            var NBytes = N.ToByteArray(true, true);
+            var padLength = N.ToByteArray(true, true).Length;
 
             // M2 = H( A | M1 | S )
-            return H((PadBytes(A.ToByteArray(true, true), NBytes.Length))
-                .Concat(PadBytes(M1, NBytes.Length))
-                .Concat(PadBytes(S, NBytes.Length))
-                .ToArray());
+            return H((PadBytes(A.ToByteArray(true, true), padLength))
+                    .Concat(PadBytes(M1.ToByteArray(true, true), padLength))
+                    .Concat(PadBytes(S.ToByteArray(true, true), padLength))
+                    .ToArray())
+                .ToSrpBigInt();
         }
 
         public static byte[] PadBytes(byte[] bytes, int length)

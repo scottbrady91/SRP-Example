@@ -29,22 +29,13 @@ namespace ScottBrady91.Srp.Example
             var serverS = server.ComputeSessionKey(v, u, A);
             if (clientS != serverS || clientS != TestVectors.expected_S) throw new Exception();
 
-            var M1 = Helpers.ComputeClientProof(
-                TestVectors.N,
-                TestVectors.H,
-                A,
-                B,
-                clientS.ToByteArray(true, true));
+            var M1 = client.GenerateClientProof(B, clientS);
+            if (!server.ValidateClientProof(M1, A, serverS)) throw new Exception();
 
-            var M2 = Helpers.ComputeServerProof(
-                TestVectors.N, 
-                TestVectors.H, 
-                A, 
-                M1, 
-                clientS.ToByteArray(true, true));
+            var M2 = server.GenerateServerProof(A, M1, serverS);
+            if (!client.ValidateServerProof(M2, M1, clientS)) throw new Exception();
 
-            Console.WriteLine("M1: " + M1.ToSrpBigInt());
-            Console.WriteLine("M2: " + M2.ToSrpBigInt());
+            Console.WriteLine("SRP success!");
         }
     }
 }

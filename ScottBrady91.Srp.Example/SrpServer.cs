@@ -49,16 +49,14 @@ namespace ScottBrady91.Srp.Example
             return BigInteger.ModPow(left, b, N);
         }
 
-        public BigInteger ValidateClientProof(string I, byte[] s, BigInteger B, BigInteger S)
+        public bool ValidateClientProof(BigInteger M1, BigInteger A, BigInteger S)
         {
-            // TODO
-            throw new NotImplementedException();
+            return M1 == Helpers.ComputeClientProof(N, H, A, B, S);
         }
 
-        public BigInteger GenerateServerProof()
+        public BigInteger GenerateServerProof(BigInteger A, BigInteger M1, BigInteger S)
         {
-            // TODO
-            throw new NotImplementedException();
+            return Helpers.ComputeServerProof(N, H, A, M1, S);
         }
     }
 }
