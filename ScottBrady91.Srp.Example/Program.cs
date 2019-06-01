@@ -23,10 +23,8 @@ namespace ScottBrady91.Srp.Example
             var B = server.GenerateBValues(v);
             if (B != TestVectors.expected_B) throw new Exception();
 
-            var u = TestVectors.H(A.ToByteArray(true, true).Concat(B.ToByteArray(true, true)).ToArray()).ToSrpBigInt();
-
-            var clientS = client.ComputeSessionKey(TestVectors.I, TestVectors.P, TestVectors.s, u, B);
-            var serverS = server.ComputeSessionKey(v, u, A);
+            var clientS = client.ComputeSessionKey(TestVectors.I, TestVectors.P, TestVectors.s, A, B);
+            var serverS = server.ComputeSessionKey(v, A, B);
             if (clientS != serverS || clientS != TestVectors.expected_S) throw new Exception();
 
             var M1 = client.GenerateClientProof(B, clientS);

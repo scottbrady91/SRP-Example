@@ -45,6 +45,14 @@ namespace ScottBrady91.Srp.Example
             return new BigInteger(k, isBigEndian: true);
         }
 
+        public static BigInteger Computeu(Func<byte[], byte[]> H, BigInteger A, BigInteger B) 
+        {
+            return H(A.ToByteArray(true, true)
+                    .Concat(B.ToByteArray(true, true))
+                    .ToArray())
+                    .ToSrpBigInt();
+        }
+
         public static BigInteger ComputeClientProof(
             BigInteger N,
             Func<byte[], byte[]> H,

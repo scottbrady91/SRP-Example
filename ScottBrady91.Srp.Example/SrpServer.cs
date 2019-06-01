@@ -40,8 +40,10 @@ namespace ScottBrady91.Srp.Example
             return B;
         }
 
-        public BigInteger ComputeSessionKey(BigInteger v, BigInteger u, BigInteger A)
+        public BigInteger ComputeSessionKey(BigInteger v, BigInteger A, BigInteger B)
         {
+            var u = Helpers.Computeu(H, A, B);
+
             // (Av^u)
             var left = A * BigInteger.ModPow(v, u, N) % N;
             

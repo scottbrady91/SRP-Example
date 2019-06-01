@@ -39,13 +39,14 @@ namespace ScottBrady91.Srp.Example
             a = TestVectors.a;
 
             // A = g^a
-            A = BigInteger.ModPow(g, a, TestVectors.N);
+            A = BigInteger.ModPow(g, a, N);
 
             return A;
         }
 
-        public BigInteger ComputeSessionKey(string I, string P, byte[] s, BigInteger u, BigInteger B)
+        public BigInteger ComputeSessionKey(string I, string P, byte[] s, BigInteger A, BigInteger B)
         {
+            var u = Helpers.Computeu(H, A, B);
             var x = GeneratePrivateKey(I, P, s);
             var k = Helpers.Computek(g, N, H);
 
