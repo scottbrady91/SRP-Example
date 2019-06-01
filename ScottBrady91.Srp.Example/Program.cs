@@ -23,8 +23,8 @@ namespace ScottBrady91.Srp.Example
             var B = server.GenerateBValues(v);
             if (B != TestVectors.expected_B) throw new Exception();
 
-            var clientS = client.ComputeSessionKey(TestVectors.I, TestVectors.P, TestVectors.s, A, B);
-            var serverS = server.ComputeSessionKey(v, A, B);
+            var clientS = client.ComputeSessionKey(TestVectors.I, TestVectors.P, TestVectors.s, B);
+            var serverS = server.ComputeSessionKey(v, A);
             if (clientS != serverS || clientS != TestVectors.expected_S) throw new Exception();
 
             var M1 = client.GenerateClientProof(B, clientS);

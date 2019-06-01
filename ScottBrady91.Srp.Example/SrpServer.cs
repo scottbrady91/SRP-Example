@@ -40,7 +40,7 @@ namespace ScottBrady91.Srp.Example
             return B;
         }
 
-        public BigInteger ComputeSessionKey(BigInteger v, BigInteger A, BigInteger B)
+        public BigInteger ComputeSessionKey(BigInteger v, BigInteger A)
         {
             var u = Helpers.Computeu(H, A, B);
 

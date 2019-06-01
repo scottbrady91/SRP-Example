@@ -44,7 +44,7 @@ namespace ScottBrady91.Srp.Example
             return A;
         }
 
-        public BigInteger ComputeSessionKey(string I, string P, byte[] s, BigInteger A, BigInteger B)
+        public BigInteger ComputeSessionKey(string I, string P, byte[] s, BigInteger B)
         {
             var u = Helpers.Computeu(H, A, B);
             var x = GeneratePrivateKey(I, P, s);
